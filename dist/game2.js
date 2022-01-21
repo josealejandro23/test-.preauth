@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GildedRose = exports.Item = void 0;
+exports.GildedRose = exports.TSpecialItem = exports.TAgedBrieItem = exports.TPassesItem = exports.TNormalItem = exports.Item = void 0;
 class Item {
     constructor(name, sellIn, quality) {
         this.name = name;
@@ -9,49 +9,81 @@ class Item {
     }
 }
 exports.Item = Item;
+class TNormalItem extends Item {
+    constructor(name, sellin, quality) {
+        super(name, sellin, quality);
+        this.updateQuality();
+    }
+    updateQuality() {
+        if (this.quality > 0)
+            this.quality -= 1;
+        if (this.sellIn < 0)
+            this.quality -= 1;
+    }
+}
+exports.TNormalItem = TNormalItem;
+class TPassesItem extends TNormalItem {
+    constructor(name, sellin, quality) {
+        super(name, sellin, quality);
+    }
+    updateQuality() {
+        if (this.quality >= 50)
+            return;
+        this.quality += 1;
+        if (this.sellIn < 11)
+            this.quality += 1;
+        if (this.sellIn < 6)
+            this.quality += 1;
+    }
+}
+exports.TPassesItem = TPassesItem;
+class TAgedBrieItem extends TNormalItem {
+    constructor(name, sellin, quality) {
+        super(name, sellin, quality);
+    }
+    updateQuality() {
+        if (this.quality >= 50)
+            return;
+        this.quality += 1;
+    }
+}
+exports.TAgedBrieItem = TAgedBrieItem;
+class TSpecialItem extends TNormalItem {
+    constructor(name, sellin, quality) {
+        super(name, sellin, quality);
+    }
+    updateQuality() {
+        this.quality = 80;
+    }
+}
+exports.TSpecialItem = TSpecialItem;
 class GildedRose {
     constructor(items = []) {
         this.items = items;
-    }
-    decreceQuality(item) {
-        if (item.name !== ("Sulfuras, Hand of Ragnaros" && 'Conjured') && item.quality > 0)
-            item.quality -= 1;
-        if (item.name == 'Conjured' && item.quality > 0)
-            item.quality -= 2;
-    }
-    increaseQuality(item) {
-        if (item.quality < 50)
-            item.quality += 1;
-        if (item.name === "Backstage passes to a TAFKAL80ETC concert" && item.quality < 50 && item.sellIn < 11) {
-            item.quality += 1;
-            item.sellIn < 6 ? item.quality + 1 : item.quality;
-        }
-    }
-    decreceSelIn(item) {
-        item.sellIn -= 1;
-    }
-    decreceQualitySpecial(item) {
-        if (item.name != ("Aged Brie" && "Backstage passes to a TAFKAL80ETC concert")) {
-            this.decreceQuality(item);
-        }
-        else if (item.quality < 50)
-            item.quality += 1;
-        if (item.name === "Backstage passes to a TAFKAL80ETC concert")
-            item.quality = 0;
+        this.updateQuality();
     }
     updateQuality() {
-        this.items.forEach((item) => {
-            if (item.name !== ("Aged Brie" && "Backstage passes to a TAFKAL80ETC concert"))
-                this.decreceQuality(item);
+        this.items.forEach((item, i) => {
+            let object;
+            if (item.name === "Aged Brie")
+                object = new TAgedBrieItem(item.name, item.sellIn, item.quality);
+            else if (item.name === "Backstage passes to a TAFKAL80ETC concert")
+                object = new TPassesItem(item.name, item.sellIn, item.quality);
+            else if (item.name === 'Sulfuras')
+                object = new TSpecialItem(item.name, item.sellIn, item.quality);
             else
-                this.increaseQuality(item);
-            if (item.name !== "Sulfuras, Hand of Ragnaros") {
-                this.decreceSelIn(item);
-            }
-            if (item.sellIn < 0) {
-                this.decreceQualitySpecial(item);
-            }
+                object = new TNormalItem(item.name, item.sellIn, item.quality);
+            this.items[i] = object;
         });
     }
 }
 exports.GildedRose = GildedRose;
+let items = [
+    { name: "Sulfuras", sellIn: 0, quality: 80 },
+    { name: "Aged Brie", sellIn: 10, quality: 49 },
+    { name: "Backstage passes to a TAFKAL80ETC concert", sellIn: 3, quality: 38 },
+    { name: "Other Item", sellIn: 10, quality: 20 },
+];
+let gilden = new GildedRose(items);
+console.log(items);
+//# sourceMappingURL=game2.js.map

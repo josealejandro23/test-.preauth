@@ -11,6 +11,52 @@ export class Item {
    }
 }
 
+export class TNormalItem extends Item {
+   //se sobrecarga el constructor para generar las propiedades
+   constructor(name:string, sellin:number, quality:number) {
+      super(name, sellin, quality);
+      this.updateQuality();
+   }
+   //merma de la calidad para objetos normales
+   updateQuality(){
+      if(this.quality > 0) 
+         this.quality -= 1;
+       if(this.sellIn < 0 )
+         this.quality -= 1;
+   }
+}
+export class TPassesItem extends TNormalItem {
+   constructor(name: string, sellin: number, quality: number) {
+      super(name, sellin, quality);
+   }
+   //ajuste de la calidad considerando los días antes del evento
+   updateQuality() {
+      if (this.quality >= 50) return;
+      this.quality += 1;
+      if (this.sellIn < 11) this.quality += 1;
+      if (this.sellIn < 6) this.quality += 1;
+   }
+}
+export class TAgedBrieItem extends TNormalItem {
+   constructor(name: string, sellin: number, quality: number) {
+      super(name, sellin, quality);
+   }
+   
+   updateQuality() {
+      if (this.quality >= 50) return;
+      this.quality += 1;
+   }
+}
+export class TSpecialItem extends TNormalItem {
+   constructor(name: string, sellin: number, quality: number) {
+      super(name, sellin, quality);
+   }
+   //estos items tienen calidad constante
+   updateQuality() {
+      this.quality = 80;
+   }
+}
+
 export class GildedRose {
    items: Array<Item>;
 
@@ -20,56 +66,33 @@ export class GildedRose {
       this.updateQuality();
    }
 
-   //función que baja la calidad de un item 
-   private decreceQuality(item: Item) {
-      //los elementos que tengan calidad positiva serán decrecidos siempre que no sean especiales
-      if (item.name !== ("Sulfuras, Hand of Ragnaros" && 'Conjured')  && item.quality > 0) 
-         item.quality -= 1;
-      //elementos conjurados pierden calidad por 2
-      if(item.name == 'Conjured' && item.quality > 0)
-         item.quality -= 2;
-   }
-
-   //función para aumentar la caidad de un producto
-   private increaseQuality(item: Item) {
-      if (item.quality < 50) item.quality += 1;
-      //manejo de la calidad para entradas al concierto
-      if (item.name === "Backstage passes to a TAFKAL80ETC concert" && item.quality < 50 && item.sellIn < 11) {
-         item.quality +=1 ;
-         //se valida que queden menos de 6 días para el concierto y se suma otro punto de calidad
-         item.sellIn < 6 ? item.quality + 1 : item.quality;
-      }
-   }
-
-   //función para disminuir la calidad de un producto
-   private decreceSelIn(item: Item) {
-      item.sellIn -= 1;
-   }
-
-   //función que disminuye la calidad de artículos especiales
-   private decreceQualitySpecial(item: Item) {
-      //se disminuye la calidad del elemento siempre que no tenga trato especial
-      if (item.name != ("Aged Brie" && "Backstage passes to a TAFKAL80ETC concert")) {
-         this.decreceQuality(item);
-      } else if (item.quality < 50) item.quality += 1;
-      //se reduce a 0 la calidad de los pases de concierto
-      if (item.name === "Backstage passes to a TAFKAL80ETC concert") item.quality = 0;
-   }
-
    updateQuality() {
       //se cambia a un ciclo foreach que es más elegante y claro para trabajar
-      this.items.forEach((item) => {
-         if (item.name !== ("Aged Brie" && "Backstage passes to a TAFKAL80ETC concert"))
-            this.decreceQuality(item);
-         else this.increaseQuality(item);
-
-         if (item.name !== "Sulfuras, Hand of Ragnaros") {
-            this.decreceSelIn(item);
-         }
-
-         if (item.sellIn < 0) {
-            this.decreceQualitySpecial(item);
-         }
+      this.items.forEach((item,i) => {
+         let object : Item;
+         //se recorren los items y se crea el objeto correspondiente
+         if (item.name === "Aged Brie") 
+            object = new TAgedBrieItem(item.name, item.sellIn, item.quality);
+         else if (item.name === "Backstage passes to a TAFKAL80ETC concert")
+            object = new TPassesItem(item.name, item.sellIn, item.quality);
+         else if(item.name === 'Sulfuras')
+            object = new TSpecialItem(item.name, item.sellIn, item.quality);
+         else  
+            object = new TNormalItem(item.name, item.sellIn, item.quality);
+         //se reemplaza el item original por el recalculado
+         this.items[i] = object;
       });
    }
 }
+
+//array de items para verificar pruebas
+let items: Array<Item> = [
+   { name: "Sulfuras", sellIn: 0, quality: 80 },
+   { name: "Aged Brie", sellIn: 10, quality: 49 },
+   { name: "Backstage passes to a TAFKAL80ETC concert", sellIn: 3, quality: 38 },
+   { name: "Other Item", sellIn: 10, quality: 20 },
+];
+
+const gilden = new GildedRose(items);
+// gilden.updateQuality();
+console.log(items);

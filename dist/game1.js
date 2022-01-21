@@ -5,14 +5,17 @@ let subSet = [];
 set = set.filter((val) => {
     return val <= N;
 });
-for (var i = 0; i < set.length; i++) {
-    for (let j = i + 1; j < set.length; j++) {
-        if (set[i] + set[j] === N) {
-            subSet.push(set[i], set[j]);
-            break;
-        }
-    }
-    if (subSet[0])
+for (let i = 0; i < set.length; i++) {
+    const val = set[i];
+    let j;
+    const X = N - val;
+    j = set.indexOf(X);
+    if (i === j)
+        continue;
+    if (j >= 0) {
+        subSet.push(val, set[j]);
         break;
+    }
 }
 console.log(subSet);
+//# sourceMappingURL=game1.js.map

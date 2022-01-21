@@ -7,18 +7,21 @@ set = set.filter((val) =>{
    return val <= N
 });
 
-//se recorre el arreglo con doble ciclo, el externo para recorrer cada posición
-//y el interno para recorrer las posición mayores al del arreglo externo.
-for (var i = 0; i < set.length; i++) {
-   //el arreglo interno va una posición por delante del externo
-   for (let j = i+1; j < set.length; j++) {
-      if (set[i] + set[j] === N) {
-         subSet.push(set[i], set[j]);
-         break;
-      }
+for (let i = 0; i < set.length; i++) {
+   const val = set[i];
+   let j : number;
+   //se obtiene la diferencia entre el valor buscado y el valor actual en el array
+   const X = N - val;
+   //se busca en el array si existe el valor X
+   j = set.indexOf(X);
+   //se verifica que el índice encontrado no sea igual al actual para evitar un caso en el que el número buscado sea
+   //el doble de algúno de los valores en el array, como N = 10 y [..,5,..]
+   if(i === j) continue;
+   //si hay un índice válido se retorna la respuesta
+   if(j >= 0){
+      subSet.push(val,set[j]);   
+      break;
    }
-   //Si ya hay elementos en el subset fue porque se encontró una respuesta y se termina el ciclo.
-   if(subSet[0]) break;
 }
 
 console.log(subSet);
