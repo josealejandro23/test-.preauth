@@ -84,6 +84,6 @@ let items = [
     { name: "Backstage passes to a TAFKAL80ETC concert", sellIn: 3, quality: 38 },
     { name: "Other Item", sellIn: 10, quality: 20 },
 ];
-let gilden = new GildedRose(items);
+const gilden = new GildedRose(items);
 console.log(items);
 //# sourceMappingURL=game2.js.map

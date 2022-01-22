@@ -1,12 +1,14 @@
 {
-  "name": "test-preauth-io",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+   "name": "test-preauth-io",
+   "version": "1.0.0",
+   "description": "",
+   "main": "index.js",
+   "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1",
+      "game1": "cls && tsc && node dist/game1",
+      "game2": "cls && tsc && node dist/game2"
+   },
+   "keywords": [],
+   "author": "",
+   "license": "ISC"
 }
